@@ -1,0 +1,22 @@
+services:
+  app:
+    image: bookdiscount:latest
+    depends_on:
+      - postgres
+    ports:
+      - "9081:8081"
+    environment:
+      DRIVER_CLASS: org.postgresql.Driver
+      JDBC_URL: jdbc:postgresql://postgres:5432/bookdb
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: bookdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+

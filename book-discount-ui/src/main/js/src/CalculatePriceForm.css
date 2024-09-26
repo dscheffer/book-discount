@@ -1,0 +1,14 @@
+form > div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+
+.book-label {
+    margin-right: 20px !important;
+}
+
+.book-form {
+    padding: 15px;
+}

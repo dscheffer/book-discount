@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="1-1" author="dscheffer">
+        <createTable tableName="book">
+            <column name="id" type="serial">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="price" type="decimal(4,2)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="1-2" author="dscheffer">
+        <insert tableName="book">
+            <column name="name" value="Buch1"/>
+            <column name="price" value="8.00"/>
+        </insert>
+        <insert tableName="book">
+            <column name="name" value="Buch2"/>
+            <column name="price" value="8.00"/>
+        </insert>
+        <insert tableName="book">
+            <column name="name" value="Buch3"/>
+            <column name="price" value="8.00"/>
+        </insert>
+        <insert tableName="book">
+            <column name="name" value="Buch4"/>
+            <column name="price" value="8.00"/>
+        </insert>
+        <insert tableName="book">
+            <column name="name" value="Buch5"/>
+            <column name="price" value="8.00"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>
