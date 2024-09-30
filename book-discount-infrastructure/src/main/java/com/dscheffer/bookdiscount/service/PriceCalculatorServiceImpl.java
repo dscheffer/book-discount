@@ -46,7 +46,7 @@ public class PriceCalculatorServiceImpl implements PriceCalculatorService {
     }
 
     // See: https://stackoverflow.com/a/67306387
-    int[][] getIntegerCompositions(int n, int maximumNumber) {
+    private int[][] getIntegerCompositions(int n, int maximumNumber) {
         return IntStream.range(0, n)
                 // prepare 2D arrays of summands
                 .mapToObj(i -> IntStream.rangeClosed(1, n - i)
