@@ -29,6 +29,9 @@ public class PriceCalculatorServiceImpl implements PriceCalculatorService {
         var finalPrice = BigDecimal.ZERO;
         for (List<Integer> composition : possibleCompositions) {
             var discountSets = createDiscountSets(bookQuantities, bookEntities, composition);
+            if (discountSets.isEmpty()) {
+                continue;
+            }
             var price = calculateDiscountSetsPrice(discountSets);
             if (priceIsSmallerOrFinalPriceIsNotInitialized(finalPrice, price)) {
                 finalPrice = price;
@@ -95,17 +98,11 @@ public class PriceCalculatorServiceImpl implements PriceCalculatorService {
             discountSets.add(discountSet);
         }
 
-        while(hasQuantitiesLeft(bookQuantitiesCopy)) {
-            for (BookEntity book : bookEntities) {
-                var quantity = bookQuantitiesCopy.get(book.getId());
-                if (quantity > 0) {
-                    var discountSet = new HashSet<BookEntity>();
-                    discountSet.add(book);
-                    discountSets.add(discountSet);
-                    bookQuantitiesCopy.put(book.getId(), quantity - 1);
-                }
-            }
+        // current discount set combination is not possible with provided quantities
+        if (hasQuantitiesLeft(bookQuantitiesCopy)) {
+            return List.of();
         }
+
         return discountSets;
     }
 
