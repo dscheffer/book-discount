@@ -9,7 +9,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -25,10 +24,10 @@ public class PriceCalculatorServiceImpl implements PriceCalculatorService {
         }
 
         var totalNumberOfBooks = bookQuantities.values().stream().reduce(0, Integer::sum);
-        var possibleCompositions = getIntegerCompositions(totalNumberOfBooks, bookEntities.size());
+        var possibleCompositions = combinationSum(IntStream.range(1, bookEntities.size() + 1).boxed().toList(), totalNumberOfBooks);
 
         var finalPrice = BigDecimal.ZERO;
-        for (int[] composition : possibleCompositions) {
+        for (List<Integer> composition : possibleCompositions) {
             var discountSets = createDiscountSets(bookQuantities, bookEntities, composition);
             var price = calculateDiscountSetsPrice(discountSets);
             if (priceIsSmallerOrFinalPriceIsNotInitialized(finalPrice, price)) {
@@ -45,44 +44,43 @@ public class PriceCalculatorServiceImpl implements PriceCalculatorService {
         return finalPrice.compareTo(BigDecimal.ZERO) == 0 || price.compareTo(finalPrice) < 0;
     }
 
-    // See: https://stackoverflow.com/a/67306387
-    private int[][] getIntegerCompositions(int n, int maximumNumber) {
-        return IntStream.range(0, n)
-                // prepare 2D arrays of summands
-                .mapToObj(i -> IntStream.rangeClosed(1, n - i)
-                        .mapToObj(j -> new int[]{j})
-                        // Stream<int[][]>
-                        .toArray(int[][]::new))
-                // sequential summation of array pairs, i.e. getting the
-                // cartesian product of arrays, up to the given number
-                .reduce((arr1, arr2) -> Arrays.stream(arr1)
-                        // combinations of inner arrays
-                        .flatMap(row1 -> {
-                            // sum of the elements of the first row
-                            int sum = Arrays.stream(row1).sum();
-                            // if the specified number is reached
-                            if (sum == n) return Arrays.stream(new int[][]{row1});
-                            // otherwise continue appending summands
-                            return Arrays.stream(arr2)
-                                    // drop those combinations that are greater
-                                    .filter(row2 -> Arrays.stream(row2).sum() + sum <= n)
-                                    .map(row2 -> Stream.of(row1, row2)
-                                            .flatMapToInt(Arrays::stream).toArray());
-                        }) // array of combinations
-                        .filter(row2 -> Arrays.stream(row2).noneMatch(i -> i > maximumNumber))
-                        .toArray(int[][]::new))
-                // otherwise an empty 2D array
-                .orElse(new int[0][]);
+    private List<List<Integer>> combinationSum(List<Integer> candidates, Integer target) {
+        var result = new ArrayList<List<Integer>>();
+        combinationSumHelper(candidates, 0, new ArrayList<>(), target, result);
+        return result;
+    }
+
+    private void combinationSumHelper(
+            List<Integer> candidates,
+            Integer currentSum,
+            List<Integer> currentCombination,
+            Integer target,
+            List<List<Integer>> result
+    ) {
+        if (currentSum.equals(target)) {
+            result.add(currentCombination);
+            return;
+        }
+
+        if (currentSum > target) {
+            return;
+        }
+
+        for (int i = 0; i < candidates.size(); i++) {
+            var currentCombinationCopy = new ArrayList<>(currentCombination);
+            currentCombinationCopy.add(candidates.get(i));
+            combinationSumHelper(candidates, currentSum + candidates.get(i), currentCombinationCopy, target, result);
+        }
     }
 
     private List<Set<BookEntity>> createDiscountSets(
             Map<Long, Integer> bookQuantities,
             List<BookEntity> bookEntities,
-            int[] maximumDiscountSetSizes
+            List<Integer> maximumDiscountSetSizes
     ) {
         var bookQuantitiesCopy = new HashMap<>(bookQuantities);
         var discountSets = new ArrayList<Set<BookEntity>>();
-        for(int maxDiscountSetSize : maximumDiscountSetSizes) {
+        for(Integer maxDiscountSetSize : maximumDiscountSetSizes) {
             var discountSet = new HashSet<BookEntity>();
             for (BookEntity book : bookEntities) {
                 var quantity = bookQuantitiesCopy.get(book.getId());
