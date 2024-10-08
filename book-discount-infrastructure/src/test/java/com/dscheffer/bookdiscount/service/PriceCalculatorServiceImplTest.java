@@ -139,6 +139,18 @@ class PriceCalculatorServiceImplTest {
                         new BigDecimal("51.2")
                 ),
                 Arguments.of(
+                        "Buch1 mal 1; Buch2 mal 1; Buch3 mal 2; Buch4 mal 2; Buch5 mal 2",
+                        Map.of(1L, 1, 2L, 1, 3L, 2, 4L, 2, 5L, 2),
+                        List.of(
+                                new BookEntity(1L, "Buch1", new BigDecimal("8.00")),
+                                new BookEntity(2L, "Buch2", new BigDecimal("8.00")),
+                                new BookEntity(3L, "Buch3", new BigDecimal("8.00")),
+                                new BookEntity(4L, "Buch4", new BigDecimal("8.00")),
+                                new BookEntity(5L, "Buch5", new BigDecimal("8.00"))
+                        ),
+                        new BigDecimal("51.2")
+                ),
+                Arguments.of(
                         "Buch1 mal 3; Buch2 mal 3; Buch3 mal 3; Buch4 mal 2; Buch5 mal 2",
                         Map.of(1L, 3, 2L, 3, 3L, 3, 4L, 2, 5L, 2),
                         List.of(

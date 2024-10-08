@@ -27,8 +27,11 @@ public class PriceCalculatorServiceImpl implements PriceCalculatorService {
         var possibleCompositions = combinationSum(IntStream.range(1, bookEntities.size() + 1).boxed().toList(), totalNumberOfBooks);
 
         var finalPrice = BigDecimal.ZERO;
+        List<BookEntity> booksSortedByQuantityDesc = bookEntities.stream()
+                .sorted((b1, b2) -> bookQuantities.get(b2.getId()).compareTo(bookQuantities.get(b1.getId())))
+                .toList();
         for (List<Integer> composition : possibleCompositions) {
-            var discountSets = createDiscountSets(bookQuantities, bookEntities, composition);
+            var discountSets = createDiscountSets(bookQuantities, booksSortedByQuantityDesc, composition);
             if (discountSets.isEmpty()) {
                 continue;
             }
